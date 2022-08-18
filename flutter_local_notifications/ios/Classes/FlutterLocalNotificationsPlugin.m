@@ -68,6 +68,7 @@ NSString *const HOUR = @"hour";
 NSString *const MINUTE = @"minute";
 NSString *const SECOND = @"second";
 NSString *const SCHEDULED_DATE_TIME = @"scheduledDateTime";
+NSString *const INTERRUPTION_LEVEL = @"interruptionLevel";
 NSString *const TIME_ZONE_NAME = @"timeZoneName";
 NSString *const MATCH_DATE_TIME_COMPONENTS = @"matchDateTimeComponents";
 NSString *const UILOCALNOTIFICATION_DATE_INTERPRETATION =
@@ -94,6 +95,13 @@ typedef NS_ENUM(NSInteger, DateTimeComponents) {
 typedef NS_ENUM(NSInteger, UILocalNotificationDateInterpretation) {
   AbsoluteGMTTime,
   WallClockTime
+};
+
+typedef NS_ENUM(NSInteger, InterruptionLevel) {
+  Active,
+  Critical,
+  Passive,
+  TimeSensitive
 };
 
 static FlutterError *getFlutterError(NSError *error) {
@@ -702,6 +710,20 @@ static FlutterError *getFlutterError(NSError *error) {
     }
     if ([self containsKey:SUBTITLE forDictionary:platformSpecifics]) {
       content.subtitle = platformSpecifics[SUBTITLE];
+    }
+    if (@available(iOS 15.0, *)) {
+        if ([self containsKey:INTERRUPTION_LEVEL forDictionary:platformSpecifics]) {
+            NSNumber *interruptionLevel = platformSpecifics[INTERRUPTION_LEVEL];
+            if ([interruptionLevel integerValue] == Active) {
+              content.interruptionLevel = UNNotificationInterruptionLevelActive;
+            } else if ([interruptionLevel integerValue] == Critical) {
+              content.interruptionLevel = UNNotificationInterruptionLevelCritical;
+            } else if ([interruptionLevel integerValue] == Passive) {
+              content.interruptionLevel = UNNotificationInterruptionLevelPassive;
+            } else if ([interruptionLevel integerValue] == TimeSensitive) {
+              content.interruptionLevel = UNNotificationInterruptionLevelTimeSensitive;
+            }
+        }
     }
   }
   if (presentSound && content.sound == nil) {

@@ -1,3 +1,4 @@
+import '../../../flutter_local_notifications.dart';
 import 'notification_attachment.dart';
 
 /// Configures notification details specific to iOS.
@@ -12,6 +13,7 @@ class IOSNotificationDetails {
     this.attachments,
     this.subtitle,
     this.threadIdentifier,
+    this.interruptionLevel,
   });
 
   /// Display an alert when the notification is triggered while app is
@@ -71,4 +73,9 @@ class IOSNotificationDetails {
   ///
   /// This property is only applicable to iOS 10 or newer.
   final String? threadIdentifier;
+
+  /// Specifies the importance and delivery timing of a notification.
+  ///
+  /// This property is only applicable to iOS 15 or newer.
+  final InterruptionLevel? interruptionLevel;
 }

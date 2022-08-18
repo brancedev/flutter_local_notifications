@@ -30,8 +30,9 @@ extension IOSNotificationDetailsMapper on IOSNotificationDetails {
         'sound': sound,
         'badgeNumber': badgeNumber,
         'threadIdentifier': threadIdentifier,
+        'interruptionLevel': interruptionLevel?.index,
         'attachments': attachments
             ?.map((a) => a.toMap()) // ignore: always_specify_types
-            .toList()
+            .toList(),
       };
 }
