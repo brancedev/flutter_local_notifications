@@ -106,10 +106,10 @@ interface PermissionRequestListener {
 @Keep
 public class FlutterLocalNotificationsPlugin
     implements MethodCallHandler,
-        PluginRegistry.NewIntentListener,
-        PluginRegistry.RequestPermissionsResultListener,
-        FlutterPlugin,
-        ActivityAware {
+    PluginRegistry.NewIntentListener,
+    PluginRegistry.RequestPermissionsResultListener,
+    FlutterPlugin,
+    ActivityAware {
 
   static final String PAYLOAD = "payload";
   static final String NOTIFICATION_ID = "notificationId";
@@ -120,20 +120,16 @@ public class FlutterLocalNotificationsPlugin
   private static final String DRAWABLE = "drawable";
   private static final String DEFAULT_ICON = "defaultIcon";
   private static final String SELECT_NOTIFICATION = "SELECT_NOTIFICATION";
-  private static final String SELECT_FOREGROUND_NOTIFICATION_ACTION =
-      "SELECT_FOREGROUND_NOTIFICATION";
+  private static final String SELECT_FOREGROUND_NOTIFICATION_ACTION = "SELECT_FOREGROUND_NOTIFICATION";
   private static final String SCHEDULED_NOTIFICATIONS = "scheduled_notifications";
   private static final String INITIALIZE_METHOD = "initialize";
   private static final String GET_CALLBACK_HANDLE_METHOD = "getCallbackHandle";
   private static final String ARE_NOTIFICATIONS_ENABLED_METHOD = "areNotificationsEnabled";
-  private static final String CREATE_NOTIFICATION_CHANNEL_GROUP_METHOD =
-      "createNotificationChannelGroup";
-  private static final String DELETE_NOTIFICATION_CHANNEL_GROUP_METHOD =
-      "deleteNotificationChannelGroup";
+  private static final String CREATE_NOTIFICATION_CHANNEL_GROUP_METHOD = "createNotificationChannelGroup";
+  private static final String DELETE_NOTIFICATION_CHANNEL_GROUP_METHOD = "deleteNotificationChannelGroup";
   private static final String CREATE_NOTIFICATION_CHANNEL_METHOD = "createNotificationChannel";
   private static final String DELETE_NOTIFICATION_CHANNEL_METHOD = "deleteNotificationChannel";
-  private static final String GET_ACTIVE_NOTIFICATION_MESSAGING_STYLE_METHOD =
-      "getActiveNotificationMessagingStyle";
+  private static final String GET_ACTIVE_NOTIFICATION_MESSAGING_STYLE_METHOD = "getActiveNotificationMessagingStyle";
   private static final String GET_NOTIFICATION_CHANNELS_METHOD = "getNotificationChannels";
   private static final String START_FOREGROUND_SERVICE = "startForegroundService";
   private static final String STOP_FOREGROUND_SERVICE = "stopForegroundService";
@@ -147,8 +143,7 @@ public class FlutterLocalNotificationsPlugin
   private static final String PERIODICALLY_SHOW_METHOD = "periodicallyShow";
   private static final String SHOW_DAILY_AT_TIME_METHOD = "showDailyAtTime";
   private static final String SHOW_WEEKLY_AT_DAY_AND_TIME_METHOD = "showWeeklyAtDayAndTime";
-  private static final String GET_NOTIFICATION_APP_LAUNCH_DETAILS_METHOD =
-      "getNotificationAppLaunchDetails";
+  private static final String GET_NOTIFICATION_APP_LAUNCH_DETAILS_METHOD = "getNotificationAppLaunchDetails";
   private static final String REQUEST_PERMISSION_METHOD = "requestPermission";
   private static final String METHOD_CHANNEL = "dexterous.com/flutter/local_notifications";
   private static final String INVALID_ICON_ERROR_CODE = "invalid_icon";
@@ -157,25 +152,18 @@ public class FlutterLocalNotificationsPlugin
   private static final String INVALID_SOUND_ERROR_CODE = "invalid_sound";
   private static final String INVALID_LED_DETAILS_ERROR_CODE = "invalid_led_details";
   private static final String UNSUPPORTED_OS_VERSION_ERROR_CODE = "unsupported_os_version";
-  private static final String GET_ACTIVE_NOTIFICATIONS_ERROR_MESSAGE =
-      "Android version must be 6.0 or newer to use getActiveNotifications";
+  private static final String GET_ACTIVE_NOTIFICATIONS_ERROR_MESSAGE = "Android version must be 6.0 or newer to use getActiveNotifications";
   private static final String GET_NOTIFICATION_CHANNELS_ERROR_CODE = "getNotificationChannelsError";
-  private static final String GET_ACTIVE_NOTIFICATION_MESSAGING_STYLE_ERROR_CODE =
-      "getActiveNotificationMessagingStyleError";
-  private static final String INVALID_LED_DETAILS_ERROR_MESSAGE =
-      "Must specify both ledOnMs and ledOffMs to configure the blink cycle on older versions of"
-          + " Android before Oreo";
+  private static final String GET_ACTIVE_NOTIFICATION_MESSAGING_STYLE_ERROR_CODE = "getActiveNotificationMessagingStyleError";
+  private static final String INVALID_LED_DETAILS_ERROR_MESSAGE = "Must specify both ledOnMs and ledOffMs to configure the blink cycle on older versions of"
+      + " Android before Oreo";
   private static final String NOTIFICATION_LAUNCHED_APP = "notificationLaunchedApp";
-  private static final String INVALID_DRAWABLE_RESOURCE_ERROR_MESSAGE =
-      "The resource %s could not be found. Please make sure it has been added as a drawable"
-          + " resource to your Android head project.";
-  private static final String INVALID_RAW_RESOURCE_ERROR_MESSAGE =
-      "The resource %s could not be found. Please make sure it has been added as a raw resource to"
-          + " your Android head project.";
-  private static final String PERMISSION_REQUEST_IN_PROGRESS_ERROR_CODE =
-      "permissionRequestInProgress";
-  private static final String PERMISSION_REQUEST_IN_PROGRESS_ERROR_MESSAGE =
-      "Another permission request is already in progress";
+  private static final String INVALID_DRAWABLE_RESOURCE_ERROR_MESSAGE = "The resource %s could not be found. Please make sure it has been added as a drawable"
+      + " resource to your Android head project.";
+  private static final String INVALID_RAW_RESOURCE_ERROR_MESSAGE = "The resource %s could not be found. Please make sure it has been added as a raw resource to"
+      + " your Android head project.";
+  private static final String PERMISSION_REQUEST_IN_PROGRESS_ERROR_CODE = "permissionRequestInProgress";
+  private static final String PERMISSION_REQUEST_IN_PROGRESS_ERROR_MESSAGE = "Another permission request is already in progress";
   private static final String CANCEL_ID = "id";
   private static final String CANCEL_TAG = "tag";
   private static final String ACTION_ID = "actionId";
@@ -208,8 +196,8 @@ public class FlutterLocalNotificationsPlugin
 
   protected static Notification createNotification(
       Context context, NotificationDetails notificationDetails) {
-    NotificationChannelDetails notificationChannelDetails =
-        NotificationChannelDetails.fromNotificationDetails(notificationDetails);
+    NotificationChannelDetails notificationChannelDetails = NotificationChannelDetails
+        .fromNotificationDetails(notificationDetails);
     if (canCreateNotificationChannel(context, notificationChannelDetails)) {
       setupNotificationChannel(context, notificationChannelDetails);
     }
@@ -221,26 +209,23 @@ public class FlutterLocalNotificationsPlugin
     if (VERSION.SDK_INT >= VERSION_CODES.M) {
       flags |= PendingIntent.FLAG_IMMUTABLE;
     }
-    PendingIntent pendingIntent =
-        PendingIntent.getActivity(context, notificationDetails.id, intent, flags);
-    DefaultStyleInformation defaultStyleInformation =
-        (DefaultStyleInformation) notificationDetails.styleInformation;
-    NotificationCompat.Builder builder =
-        new NotificationCompat.Builder(context, notificationDetails.channelId)
-            .setContentTitle(
-                defaultStyleInformation.htmlFormatTitle
-                    ? fromHtml(notificationDetails.title)
-                    : notificationDetails.title)
-            .setContentText(
-                defaultStyleInformation.htmlFormatBody
-                    ? fromHtml(notificationDetails.body)
-                    : notificationDetails.body)
-            .setTicker(notificationDetails.ticker)
-            .setAutoCancel(BooleanUtils.getValue(notificationDetails.autoCancel))
-            .setContentIntent(pendingIntent)
-            .setPriority(notificationDetails.priority)
-            .setOngoing(BooleanUtils.getValue(notificationDetails.ongoing))
-            .setOnlyAlertOnce(BooleanUtils.getValue(notificationDetails.onlyAlertOnce));
+    PendingIntent pendingIntent = PendingIntent.getActivity(context, notificationDetails.id, intent, flags);
+    DefaultStyleInformation defaultStyleInformation = (DefaultStyleInformation) notificationDetails.styleInformation;
+    NotificationCompat.Builder builder = new NotificationCompat.Builder(context, notificationDetails.channelId)
+        .setContentTitle(
+            defaultStyleInformation.htmlFormatTitle
+                ? fromHtml(notificationDetails.title)
+                : notificationDetails.title)
+        .setContentText(
+            defaultStyleInformation.htmlFormatBody
+                ? fromHtml(notificationDetails.body)
+                : notificationDetails.body)
+        .setTicker(notificationDetails.ticker)
+        .setAutoCancel(BooleanUtils.getValue(notificationDetails.autoCancel))
+        .setContentIntent(pendingIntent)
+        .setPriority(notificationDetails.priority)
+        .setOngoing(BooleanUtils.getValue(notificationDetails.ongoing))
+        .setOnlyAlertOnce(BooleanUtils.getValue(notificationDetails.onlyAlertOnce));
 
     if (notificationDetails.actions != null) {
       // Space out request codes by 16 so even with 16 actions they won't clash
@@ -277,10 +262,9 @@ public class FlutterLocalNotificationsPlugin
         }
 
         @SuppressLint("UnspecifiedImmutableFlag")
-        final PendingIntent actionPendingIntent =
-            action.showsUserInterface != null && action.showsUserInterface
-                ? PendingIntent.getActivity(context, requestCode++, actionIntent, actionFlags)
-                : PendingIntent.getBroadcast(context, requestCode++, actionIntent, actionFlags);
+        final PendingIntent actionPendingIntent = action.showsUserInterface != null && action.showsUserInterface
+            ? PendingIntent.getActivity(context, requestCode++, actionIntent, actionFlags)
+            : PendingIntent.getBroadcast(context, requestCode++, actionIntent, actionFlags);
 
         final Spannable actionTitleSpannable = new SpannableString(action.title);
         if (action.titleColor != null) {
@@ -302,8 +286,7 @@ public class FlutterLocalNotificationsPlugin
 
         if (action.actionInputs != null) {
           for (NotificationActionInput input : action.actionInputs) {
-            RemoteInput.Builder remoteInput =
-                new RemoteInput.Builder(INPUT_RESULT).setLabel(input.label);
+            RemoteInput.Builder remoteInput = new RemoteInput.Builder(INPUT_RESULT).setLabel(input.label);
             if (input.allowFreeFormInput != null) {
               remoteInput.setAllowFreeFormInput(input.allowFreeFormInput);
             }
@@ -385,18 +368,19 @@ public class FlutterLocalNotificationsPlugin
   private static Boolean canCreateNotificationChannel(
       Context context, NotificationChannelDetails notificationChannelDetails) {
     if (VERSION.SDK_INT >= VERSION_CODES.O) {
-      NotificationManager notificationManager =
-          (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-      NotificationChannel notificationChannel =
-          notificationManager.getNotificationChannel(notificationChannelDetails.id);
-      // only create/update the channel when needed/specified. Allow this happen to when
+      NotificationManager notificationManager = (NotificationManager) context
+          .getSystemService(Context.NOTIFICATION_SERVICE);
+      NotificationChannel notificationChannel = notificationManager
+          .getNotificationChannel(notificationChannelDetails.id);
+      // only create/update the channel when needed/specified. Allow this happen to
+      // when
       // channelAction may be null to support cases where notifications had been
-      // created on older versions of the plugin where channel management options weren't available
+      // created on older versions of the plugin where channel management options
+      // weren't available
       // back then
       return ((notificationChannel == null
-              && (notificationChannelDetails.channelAction == null
-                  || notificationChannelDetails.channelAction
-                      == NotificationChannelAction.CreateIfNotExists))
+          && (notificationChannelDetails.channelAction == null
+              || notificationChannelDetails.channelAction == NotificationChannelAction.CreateIfNotExists))
           || (notificationChannel != null
               && notificationChannelDetails.channelAction == NotificationChannelAction.Update));
     }
@@ -410,11 +394,11 @@ public class FlutterLocalNotificationsPlugin
     if (!StringUtils.isNullOrEmpty(notificationDetails.icon)) {
       builder.setSmallIcon(getDrawableResourceId(context, notificationDetails.icon));
     } else {
-      SharedPreferences sharedPreferences =
-          context.getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
+      SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
       String defaultIcon = sharedPreferences.getString(DEFAULT_ICON, null);
       if (StringUtils.isNullOrEmpty(defaultIcon)) {
-        // for backwards compatibility: this is for handling the old way references to the icon used
+        // for backwards compatibility: this is for handling the old way references to
+        // the icon used
         // to be kept but should be removed in future
         builder.setSmallIcon(notificationDetails.iconResourceId);
 
@@ -427,13 +411,13 @@ public class FlutterLocalNotificationsPlugin
   @NonNull
   static Gson buildGson() {
     if (gson == null) {
-      RuntimeTypeAdapterFactory<StyleInformation> styleInformationAdapter =
-          RuntimeTypeAdapterFactory.of(StyleInformation.class)
-              .registerSubtype(DefaultStyleInformation.class)
-              .registerSubtype(BigTextStyleInformation.class)
-              .registerSubtype(BigPictureStyleInformation.class)
-              .registerSubtype(InboxStyleInformation.class)
-              .registerSubtype(MessagingStyleInformation.class);
+      RuntimeTypeAdapterFactory<StyleInformation> styleInformationAdapter = RuntimeTypeAdapterFactory
+          .of(StyleInformation.class)
+          .registerSubtype(DefaultStyleInformation.class)
+          .registerSubtype(BigTextStyleInformation.class)
+          .registerSubtype(BigPictureStyleInformation.class)
+          .registerSubtype(InboxStyleInformation.class)
+          .registerSubtype(MessagingStyleInformation.class);
       GsonBuilder builder = new GsonBuilder().registerTypeAdapterFactory(styleInformationAdapter);
       gson = builder.create();
     }
@@ -442,12 +426,12 @@ public class FlutterLocalNotificationsPlugin
 
   private static ArrayList<NotificationDetails> loadScheduledNotifications(Context context) {
     ArrayList<NotificationDetails> scheduledNotifications = new ArrayList<>();
-    SharedPreferences sharedPreferences =
-        context.getSharedPreferences(SCHEDULED_NOTIFICATIONS, Context.MODE_PRIVATE);
+    SharedPreferences sharedPreferences = context.getSharedPreferences(SCHEDULED_NOTIFICATIONS, Context.MODE_PRIVATE);
     String json = sharedPreferences.getString(SCHEDULED_NOTIFICATIONS, null);
     if (json != null) {
       Gson gson = buildGson();
-      Type type = new TypeToken<ArrayList<NotificationDetails>>() {}.getType();
+      Type type = new TypeToken<ArrayList<NotificationDetails>>() {
+      }.getType();
       scheduledNotifications = gson.fromJson(json, type);
     }
     return scheduledNotifications;
@@ -457,15 +441,14 @@ public class FlutterLocalNotificationsPlugin
       Context context, ArrayList<NotificationDetails> scheduledNotifications) {
     Gson gson = buildGson();
     String json = gson.toJson(scheduledNotifications);
-    SharedPreferences sharedPreferences =
-        context.getSharedPreferences(SCHEDULED_NOTIFICATIONS, Context.MODE_PRIVATE);
+    SharedPreferences sharedPreferences = context.getSharedPreferences(SCHEDULED_NOTIFICATIONS, Context.MODE_PRIVATE);
     SharedPreferences.Editor editor = sharedPreferences.edit();
     editor.putString(SCHEDULED_NOTIFICATIONS, json).apply();
   }
 
   static void removeNotificationFromCache(Context context, Integer notificationId) {
     ArrayList<NotificationDetails> scheduledNotifications = loadScheduledNotifications(context);
-    for (Iterator<NotificationDetails> it = scheduledNotifications.iterator(); it.hasNext(); ) {
+    for (Iterator<NotificationDetails> it = scheduledNotifications.iterator(); it.hasNext();) {
       NotificationDetails notificationDetails = it.next();
       if (notificationDetails.id.equals(notificationId)) {
         it.remove();
@@ -495,10 +478,53 @@ public class FlutterLocalNotificationsPlugin
     String notificationDetailsJson = gson.toJson(notificationDetails);
     Intent notificationIntent = new Intent(context, ScheduledNotificationReceiver.class);
     notificationIntent.putExtra(NOTIFICATION_DETAILS, notificationDetailsJson);
-    PendingIntent pendingIntent =
-        getBroadcastPendingIntent(context, notificationDetails.id, notificationIntent);
+    PendingIntent pendingIntent = getBroadcastPendingIntent(context, notificationDetails.id, notificationIntent);
 
+    safelySchedule(context, notificationDetails, pendingIntent);
+
+    if (updateScheduledNotificationsCache) {
+      saveScheduledNotification(context, notificationDetails);
+    }
+  }
+
+  /**
+   * Tries to schedule exact notification if we have the permission, if not, we
+   * schedule a non exact notification
+   */
+  private static void safelySchedule(Context context, NotificationDetails notificationDetails,
+      PendingIntent pendingIntent) {
     AlarmManager alarmManager = getAlarmManager(context);
+
+    boolean allowedExact = true;
+    if (VERSION.SDK_INT >= VERSION_CODES.S) {
+      allowedExact = alarmManager.canScheduleExactAlarms();
+    }
+
+    if (allowedExact) {
+      scheduleExact(notificationDetails, pendingIntent, alarmManager);
+    } else {
+      scheduleNotExact(notificationDetails, pendingIntent, alarmManager);
+    }
+  }
+
+  private static void scheduleNotExact(NotificationDetails notificationDetails, PendingIntent pendingIntent,
+      AlarmManager alarmManager) {
+    if (BooleanUtils.getValue(notificationDetails.allowWhileIdle)) {
+      AlarmManagerCompat.setAndAllowWhileIdle(
+          alarmManager,
+          AlarmManager.RTC_WAKEUP,
+          notificationDetails.millisecondsSinceEpoch,
+          pendingIntent);
+    } else {
+      alarmManager.set(
+          AlarmManager.RTC_WAKEUP,
+          notificationDetails.millisecondsSinceEpoch,
+          pendingIntent);
+    }
+  }
+
+  private static void scheduleExact(NotificationDetails notificationDetails, PendingIntent pendingIntent,
+      AlarmManager alarmManager) {
     if (BooleanUtils.getValue(notificationDetails.allowWhileIdle)) {
       AlarmManagerCompat.setExactAndAllowWhileIdle(
           alarmManager,
@@ -512,10 +538,6 @@ public class FlutterLocalNotificationsPlugin
           notificationDetails.millisecondsSinceEpoch,
           pendingIntent);
     }
-
-    if (updateScheduledNotificationsCache) {
-      saveScheduledNotification(context, notificationDetails);
-    }
   }
 
   private static void zonedScheduleNotification(
@@ -526,15 +548,13 @@ public class FlutterLocalNotificationsPlugin
     String notificationDetailsJson = gson.toJson(notificationDetails);
     Intent notificationIntent = new Intent(context, ScheduledNotificationReceiver.class);
     notificationIntent.putExtra(NOTIFICATION_DETAILS, notificationDetailsJson);
-    PendingIntent pendingIntent =
-        getBroadcastPendingIntent(context, notificationDetails.id, notificationIntent);
+    PendingIntent pendingIntent = getBroadcastPendingIntent(context, notificationDetails.id, notificationIntent);
     AlarmManager alarmManager = getAlarmManager(context);
-    long epochMilli =
-        ZonedDateTime.of(
-                LocalDateTime.parse(notificationDetails.scheduledDateTime),
-                ZoneId.of(notificationDetails.timeZoneName))
-            .toInstant()
-            .toEpochMilli();
+    long epochMilli = ZonedDateTime.of(
+        LocalDateTime.parse(notificationDetails.scheduledDateTime),
+        ZoneId.of(notificationDetails.timeZoneName))
+        .toInstant()
+        .toEpochMilli();
 
     if (BooleanUtils.getValue(notificationDetails.allowWhileIdle)) {
       AlarmManagerCompat.setExactAndAllowWhileIdle(
@@ -551,14 +571,12 @@ public class FlutterLocalNotificationsPlugin
   static void scheduleNextRepeatingNotification(
       Context context, NotificationDetails notificationDetails) {
     long repeatInterval = calculateRepeatIntervalMilliseconds(notificationDetails);
-    long notificationTriggerTime =
-        calculateNextNotificationTrigger(notificationDetails.calledAt, repeatInterval);
+    long notificationTriggerTime = calculateNextNotificationTrigger(notificationDetails.calledAt, repeatInterval);
     Gson gson = buildGson();
     String notificationDetailsJson = gson.toJson(notificationDetails);
     Intent notificationIntent = new Intent(context, ScheduledNotificationReceiver.class);
     notificationIntent.putExtra(NOTIFICATION_DETAILS, notificationDetailsJson);
-    PendingIntent pendingIntent =
-        getBroadcastPendingIntent(context, notificationDetails.id, notificationIntent);
+    PendingIntent pendingIntent = getBroadcastPendingIntent(context, notificationDetails.id, notificationIntent);
     AlarmManager alarmManager = getAlarmManager(context);
     AlarmManagerCompat.setExactAndAllowWhileIdle(
         alarmManager, AlarmManager.RTC_WAKEUP, notificationTriggerTime, pendingIntent);
@@ -618,15 +636,13 @@ public class FlutterLocalNotificationsPlugin
       notificationTriggerTime = calendar.getTimeInMillis();
     }
 
-    notificationTriggerTime =
-        calculateNextNotificationTrigger(notificationTriggerTime, repeatInterval);
+    notificationTriggerTime = calculateNextNotificationTrigger(notificationTriggerTime, repeatInterval);
 
     Gson gson = buildGson();
     String notificationDetailsJson = gson.toJson(notificationDetails);
     Intent notificationIntent = new Intent(context, ScheduledNotificationReceiver.class);
     notificationIntent.putExtra(NOTIFICATION_DETAILS, notificationDetailsJson);
-    PendingIntent pendingIntent =
-        getBroadcastPendingIntent(context, notificationDetails.id, notificationIntent);
+    PendingIntent pendingIntent = getBroadcastPendingIntent(context, notificationDetails.id, notificationIntent);
     AlarmManager alarmManager = getAlarmManager(context);
 
     if (BooleanUtils.getValue(notificationDetails.allowWhileIdle)) {
@@ -693,7 +709,8 @@ public class FlutterLocalNotificationsPlugin
   @SuppressWarnings("unchecked")
   private static byte[] castObjectToByteArray(Object data) {
     byte[] byteArray;
-    // if data is deserialized by gson, it is of the wrong type and we have to convert it
+    // if data is deserialized by gson, it is of the wrong type and we have to
+    // convert it
     if (data instanceof ArrayList) {
       List<Double> l = (ArrayList<Double>) data;
       byteArray = new byte[l.size()];
@@ -710,9 +727,8 @@ public class FlutterLocalNotificationsPlugin
       Context context, Object data, BitmapSource bitmapSource) {
     Bitmap bitmap = null;
     if (bitmapSource == BitmapSource.DrawableResource) {
-      bitmap =
-          BitmapFactory.decodeResource(
-              context.getResources(), getDrawableResourceId(context, (String) data));
+      bitmap = BitmapFactory.decodeResource(
+          context.getResources(), getDrawableResourceId(context, (String) data));
     } else if (bitmapSource == BitmapSource.FilePath) {
       bitmap = BitmapFactory.decodeFile((String) data);
     } else if (bitmapSource == BitmapSource.ByteArray) {
@@ -727,8 +743,7 @@ public class FlutterLocalNotificationsPlugin
     IconCompat icon = null;
     switch (iconSource) {
       case DrawableResource:
-        icon =
-            IconCompat.createWithResource(context, getDrawableResourceId(context, (String) data));
+        icon = IconCompat.createWithResource(context, getDrawableResourceId(context, (String) data));
         break;
       case BitmapFilePath:
         icon = IconCompat.createWithBitmap(BitmapFactory.decodeFile((String) data));
@@ -739,8 +754,8 @@ public class FlutterLocalNotificationsPlugin
       case FlutterBitmapAsset:
         try {
           FlutterLoader flutterLoader = FlutterInjector.instance().flutterLoader();
-          AssetFileDescriptor assetFileDescriptor =
-              context.getAssets().openFd(flutterLoader.getLookupKeyForAsset((String) data));
+          AssetFileDescriptor assetFileDescriptor = context.getAssets()
+              .openFd(flutterLoader.getLookupKeyForAsset((String) data));
           FileInputStream fileInputStream = assetFileDescriptor.createInputStream();
           icon = IconCompat.createWithBitmap(BitmapFactory.decodeStream(fileInputStream));
           fileInputStream.close();
@@ -761,8 +776,9 @@ public class FlutterLocalNotificationsPlugin
   /**
    * Sets the visibility property to the input Notification Builder
    *
-   * @throws IllegalArgumentException If `notificationDetails.visibility` is not null but also not
-   *     matches any known index.
+   * @throws IllegalArgumentException If `notificationDetails.visibility` is not
+   *                                  null but also not
+   *                                  matches any known index.
    */
   private static void setVisibility(
       NotificationDetails notificationDetails, NotificationCompat.Builder builder) {
@@ -814,7 +830,7 @@ public class FlutterLocalNotificationsPlugin
         builder.setVibrate(notificationDetails.vibrationPattern);
       }
     } else {
-      builder.setVibrate(new long[] {0});
+      builder.setVibrate(new long[] { 0 });
     }
   }
 
@@ -833,9 +849,8 @@ public class FlutterLocalNotificationsPlugin
       NotificationDetails notificationDetails,
       NotificationCompat.Builder builder) {
     if (BooleanUtils.getValue(notificationDetails.playSound)) {
-      Uri uri =
-          retrieveSoundResourceUri(
-              context, notificationDetails.sound, notificationDetails.soundSource);
+      Uri uri = retrieveSoundResourceUri(
+          context, notificationDetails.sound, notificationDetails.soundSource);
       builder.setSound(uri);
     } else {
       builder.setSound(null);
@@ -903,21 +918,18 @@ public class FlutterLocalNotificationsPlugin
       Context context,
       NotificationDetails notificationDetails,
       NotificationCompat.Builder builder) {
-    BigPictureStyleInformation bigPictureStyleInformation =
-        (BigPictureStyleInformation) notificationDetails.styleInformation;
+    BigPictureStyleInformation bigPictureStyleInformation = (BigPictureStyleInformation) notificationDetails.styleInformation;
     NotificationCompat.BigPictureStyle bigPictureStyle = new NotificationCompat.BigPictureStyle();
     if (bigPictureStyleInformation.contentTitle != null) {
-      CharSequence contentTitle =
-          bigPictureStyleInformation.htmlFormatContentTitle
-              ? fromHtml(bigPictureStyleInformation.contentTitle)
-              : bigPictureStyleInformation.contentTitle;
+      CharSequence contentTitle = bigPictureStyleInformation.htmlFormatContentTitle
+          ? fromHtml(bigPictureStyleInformation.contentTitle)
+          : bigPictureStyleInformation.contentTitle;
       bigPictureStyle.setBigContentTitle(contentTitle);
     }
     if (bigPictureStyleInformation.summaryText != null) {
-      CharSequence summaryText =
-          bigPictureStyleInformation.htmlFormatSummaryText
-              ? fromHtml(bigPictureStyleInformation.summaryText)
-              : bigPictureStyleInformation.summaryText;
+      CharSequence summaryText = bigPictureStyleInformation.htmlFormatSummaryText
+          ? fromHtml(bigPictureStyleInformation.summaryText)
+          : bigPictureStyleInformation.summaryText;
       bigPictureStyle.setSummaryText(summaryText);
     }
 
@@ -942,21 +954,18 @@ public class FlutterLocalNotificationsPlugin
 
   private static void setInboxStyle(
       NotificationDetails notificationDetails, NotificationCompat.Builder builder) {
-    InboxStyleInformation inboxStyleInformation =
-        (InboxStyleInformation) notificationDetails.styleInformation;
+    InboxStyleInformation inboxStyleInformation = (InboxStyleInformation) notificationDetails.styleInformation;
     NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
     if (inboxStyleInformation.contentTitle != null) {
-      CharSequence contentTitle =
-          inboxStyleInformation.htmlFormatContentTitle
-              ? fromHtml(inboxStyleInformation.contentTitle)
-              : inboxStyleInformation.contentTitle;
+      CharSequence contentTitle = inboxStyleInformation.htmlFormatContentTitle
+          ? fromHtml(inboxStyleInformation.contentTitle)
+          : inboxStyleInformation.contentTitle;
       inboxStyle.setBigContentTitle(contentTitle);
     }
     if (inboxStyleInformation.summaryText != null) {
-      CharSequence summaryText =
-          inboxStyleInformation.htmlFormatSummaryText
-              ? fromHtml(inboxStyleInformation.summaryText)
-              : inboxStyleInformation.summaryText;
+      CharSequence summaryText = inboxStyleInformation.htmlFormatSummaryText
+          ? fromHtml(inboxStyleInformation.summaryText)
+          : inboxStyleInformation.summaryText;
       inboxStyle.setSummaryText(summaryText);
     }
     if (inboxStyleInformation.lines != null) {
@@ -968,8 +977,7 @@ public class FlutterLocalNotificationsPlugin
   }
 
   private static void setMediaStyle(NotificationCompat.Builder builder) {
-    androidx.media.app.NotificationCompat.MediaStyle mediaStyle =
-        new androidx.media.app.NotificationCompat.MediaStyle();
+    androidx.media.app.NotificationCompat.MediaStyle mediaStyle = new androidx.media.app.NotificationCompat.MediaStyle();
     builder.setStyle(mediaStyle);
   }
 
@@ -977,11 +985,9 @@ public class FlutterLocalNotificationsPlugin
       Context context,
       NotificationDetails notificationDetails,
       NotificationCompat.Builder builder) {
-    MessagingStyleInformation messagingStyleInformation =
-        (MessagingStyleInformation) notificationDetails.styleInformation;
+    MessagingStyleInformation messagingStyleInformation = (MessagingStyleInformation) notificationDetails.styleInformation;
     Person person = buildPerson(context, messagingStyleInformation.person);
-    NotificationCompat.MessagingStyle messagingStyle =
-        new NotificationCompat.MessagingStyle(person);
+    NotificationCompat.MessagingStyle messagingStyle = new NotificationCompat.MessagingStyle(person);
     messagingStyle.setGroupConversation(
         BooleanUtils.getValue(messagingStyleInformation.groupConversation));
     if (messagingStyleInformation.conversationTitle != null) {
@@ -999,11 +1005,10 @@ public class FlutterLocalNotificationsPlugin
 
   private static NotificationCompat.MessagingStyle.Message createMessage(
       Context context, MessageDetails messageDetails) {
-    NotificationCompat.MessagingStyle.Message message =
-        new NotificationCompat.MessagingStyle.Message(
-            messageDetails.text,
-            messageDetails.timestamp,
-            buildPerson(context, messageDetails.person));
+    NotificationCompat.MessagingStyle.Message message = new NotificationCompat.MessagingStyle.Message(
+        messageDetails.text,
+        messageDetails.timestamp,
+        buildPerson(context, messageDetails.person));
     if (messageDetails.dataUri != null && messageDetails.dataMimeType != null) {
       message.setData(messageDetails.dataMimeType, Uri.parse(messageDetails.dataUri));
     }
@@ -1036,28 +1041,24 @@ public class FlutterLocalNotificationsPlugin
 
   private static void setBigTextStyle(
       NotificationDetails notificationDetails, NotificationCompat.Builder builder) {
-    BigTextStyleInformation bigTextStyleInformation =
-        (BigTextStyleInformation) notificationDetails.styleInformation;
+    BigTextStyleInformation bigTextStyleInformation = (BigTextStyleInformation) notificationDetails.styleInformation;
     NotificationCompat.BigTextStyle bigTextStyle = new NotificationCompat.BigTextStyle();
     if (bigTextStyleInformation.bigText != null) {
-      CharSequence bigText =
-          bigTextStyleInformation.htmlFormatBigText
-              ? fromHtml(bigTextStyleInformation.bigText)
-              : bigTextStyleInformation.bigText;
+      CharSequence bigText = bigTextStyleInformation.htmlFormatBigText
+          ? fromHtml(bigTextStyleInformation.bigText)
+          : bigTextStyleInformation.bigText;
       bigTextStyle.bigText(bigText);
     }
     if (bigTextStyleInformation.contentTitle != null) {
-      CharSequence contentTitle =
-          bigTextStyleInformation.htmlFormatContentTitle
-              ? fromHtml(bigTextStyleInformation.contentTitle)
-              : bigTextStyleInformation.contentTitle;
+      CharSequence contentTitle = bigTextStyleInformation.htmlFormatContentTitle
+          ? fromHtml(bigTextStyleInformation.contentTitle)
+          : bigTextStyleInformation.contentTitle;
       bigTextStyle.setBigContentTitle(contentTitle);
     }
     if (bigTextStyleInformation.summaryText != null) {
-      CharSequence summaryText =
-          bigTextStyleInformation.htmlFormatSummaryText
-              ? fromHtml(bigTextStyleInformation.summaryText)
-              : bigTextStyleInformation.summaryText;
+      CharSequence summaryText = bigTextStyleInformation.htmlFormatSummaryText
+          ? fromHtml(bigTextStyleInformation.summaryText)
+          : bigTextStyleInformation.summaryText;
       bigTextStyle.setSummaryText(summaryText);
     }
     builder.setStyle(bigTextStyle);
@@ -1066,25 +1067,21 @@ public class FlutterLocalNotificationsPlugin
   private static void setupNotificationChannel(
       Context context, NotificationChannelDetails notificationChannelDetails) {
     if (VERSION.SDK_INT >= VERSION_CODES.O) {
-      NotificationManager notificationManager =
-          (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-      NotificationChannel notificationChannel =
-          new NotificationChannel(
-              notificationChannelDetails.id,
-              notificationChannelDetails.name,
-              notificationChannelDetails.importance);
+      NotificationManager notificationManager = (NotificationManager) context
+          .getSystemService(Context.NOTIFICATION_SERVICE);
+      NotificationChannel notificationChannel = new NotificationChannel(
+          notificationChannelDetails.id,
+          notificationChannelDetails.name,
+          notificationChannelDetails.importance);
       notificationChannel.setDescription(notificationChannelDetails.description);
       notificationChannel.setGroup(notificationChannelDetails.groupId);
       if (notificationChannelDetails.playSound) {
-        Integer audioAttributesUsage =
-            notificationChannelDetails.audioAttributesUsage != null
-                ? notificationChannelDetails.audioAttributesUsage
-                : AudioAttributes.USAGE_NOTIFICATION;
-        AudioAttributes audioAttributes =
-            new AudioAttributes.Builder().setUsage(audioAttributesUsage).build();
-        Uri uri =
-            retrieveSoundResourceUri(
-                context, notificationChannelDetails.sound, notificationChannelDetails.soundSource);
+        Integer audioAttributesUsage = notificationChannelDetails.audioAttributesUsage != null
+            ? notificationChannelDetails.audioAttributesUsage
+            : AudioAttributes.USAGE_NOTIFICATION;
+        AudioAttributes audioAttributes = new AudioAttributes.Builder().setUsage(audioAttributesUsage).build();
+        Uri uri = retrieveSoundResourceUri(
+            context, notificationChannelDetails.sound, notificationChannelDetails.soundSource);
         notificationChannel.setSound(uri, audioAttributes);
       } else {
         notificationChannel.setSound(null, null);
@@ -1111,7 +1108,8 @@ public class FlutterLocalNotificationsPlugin
     if (StringUtils.isNullOrEmpty(sound)) {
       uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
     } else {
-      // allow null as soundSource was added later and prior to that, it was assumed to be a raw
+      // allow null as soundSource was added later and prior to that, it was assumed
+      // to be a raw
       // resource
       if (soundSource == null || soundSource == SoundSource.RawResource) {
         uri = Uri.parse("android.resource://" + context.getPackageName() + "/raw/" + sound);
@@ -1169,15 +1167,11 @@ public class FlutterLocalNotificationsPlugin
   }
 
   static String getNextFireDate(NotificationDetails notificationDetails) {
-    if (notificationDetails.scheduledNotificationRepeatFrequency
-        == ScheduledNotificationRepeatFrequency.Daily) {
-      LocalDateTime localDateTime =
-          LocalDateTime.parse(notificationDetails.scheduledDateTime).plusDays(1);
+    if (notificationDetails.scheduledNotificationRepeatFrequency == ScheduledNotificationRepeatFrequency.Daily) {
+      LocalDateTime localDateTime = LocalDateTime.parse(notificationDetails.scheduledDateTime).plusDays(1);
       return DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(localDateTime);
-    } else if (notificationDetails.scheduledNotificationRepeatFrequency
-        == ScheduledNotificationRepeatFrequency.Weekly) {
-      LocalDateTime localDateTime =
-          LocalDateTime.parse(notificationDetails.scheduledDateTime).plusWeeks(1);
+    } else if (notificationDetails.scheduledNotificationRepeatFrequency == ScheduledNotificationRepeatFrequency.Weekly) {
+      LocalDateTime localDateTime = LocalDateTime.parse(notificationDetails.scheduledDateTime).plusWeeks(1);
       return DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(localDateTime);
     }
     return null;
@@ -1185,19 +1179,18 @@ public class FlutterLocalNotificationsPlugin
 
   static String getNextFireDateMatchingDateTimeComponents(NotificationDetails notificationDetails) {
     ZoneId zoneId = ZoneId.of(notificationDetails.timeZoneName);
-    ZonedDateTime scheduledDateTime =
-        ZonedDateTime.of(LocalDateTime.parse(notificationDetails.scheduledDateTime), zoneId);
+    ZonedDateTime scheduledDateTime = ZonedDateTime.of(LocalDateTime.parse(notificationDetails.scheduledDateTime),
+        zoneId);
     ZonedDateTime now = ZonedDateTime.now(zoneId);
-    ZonedDateTime nextFireDate =
-        ZonedDateTime.of(
-            now.getYear(),
-            now.getMonthValue(),
-            now.getDayOfMonth(),
-            scheduledDateTime.getHour(),
-            scheduledDateTime.getMinute(),
-            scheduledDateTime.getSecond(),
-            scheduledDateTime.getNano(),
-            zoneId);
+    ZonedDateTime nextFireDate = ZonedDateTime.of(
+        now.getYear(),
+        now.getMonthValue(),
+        now.getDayOfMonth(),
+        scheduledDateTime.getHour(),
+        scheduledDateTime.getMinute(),
+        scheduledDateTime.getSecond(),
+        scheduledDateTime.getNano(),
+        zoneId);
     while (nextFireDate.isBefore(now)) {
       // adjust to be a date in the future that matches the time
       nextFireDate = nextFireDate.plusDays(1);
@@ -1209,8 +1202,7 @@ public class FlutterLocalNotificationsPlugin
         nextFireDate = nextFireDate.plusDays(1);
       }
       return DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(nextFireDate);
-    } else if (notificationDetails.matchDateTimeComponents
-        == DateTimeComponents.DayOfMonthAndTime) {
+    } else if (notificationDetails.matchDateTimeComponents == DateTimeComponents.DayOfMonthAndTime) {
       while (nextFireDate.getDayOfMonth() != scheduledDateTime.getDayOfMonth()) {
         nextFireDate = nextFireDate.plusDays(1);
       }
@@ -1231,8 +1223,8 @@ public class FlutterLocalNotificationsPlugin
 
   private static boolean launchedActivityFromHistory(Intent intent) {
     return intent != null
-        && (intent.getFlags() & Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY)
-            == Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY;
+        && (intent.getFlags()
+            & Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) == Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY;
   }
 
   private void setActivity(Activity flutterActivity) {
@@ -1363,8 +1355,7 @@ public class FlutterLocalNotificationsPlugin
   }
 
   private void pendingNotificationRequests(Result result) {
-    ArrayList<NotificationDetails> scheduledNotifications =
-        loadScheduledNotifications(applicationContext);
+    ArrayList<NotificationDetails> scheduledNotifications = loadScheduledNotifications(applicationContext);
     List<Map<String, Object>> pendingNotifications = new ArrayList<>();
 
     for (NotificationDetails scheduledNotification : scheduledNotifications) {
@@ -1383,8 +1374,8 @@ public class FlutterLocalNotificationsPlugin
       result.error(UNSUPPORTED_OS_VERSION_ERROR_CODE, GET_ACTIVE_NOTIFICATIONS_ERROR_MESSAGE, null);
       return;
     }
-    NotificationManager notificationManager =
-        (NotificationManager) applicationContext.getSystemService(Context.NOTIFICATION_SERVICE);
+    NotificationManager notificationManager = (NotificationManager) applicationContext
+        .getSystemService(Context.NOTIFICATION_SERVICE);
     try {
       StatusBarNotification[] activeNotifications = notificationManager.getActiveNotifications();
       List<Map<String, Object>> activeNotificationsPayload = new ArrayList<>();
@@ -1441,8 +1432,7 @@ public class FlutterLocalNotificationsPlugin
     NotificationDetails notificationDetails = extractNotificationDetails(result, arguments);
     if (notificationDetails != null) {
       if (notificationDetails.matchDateTimeComponents != null) {
-        notificationDetails.scheduledDateTime =
-            getNextFireDateMatchingDateTimeComponents(notificationDetails);
+        notificationDetails.scheduledDateTime = getNextFireDateMatchingDateTimeComponents(notificationDetails);
       }
       zonedScheduleNotification(applicationContext, notificationDetails, true);
       result.success(null);
@@ -1463,11 +1453,10 @@ public class FlutterLocalNotificationsPlugin
     Boolean notificationLaunchedApp = false;
     if (mainActivity != null) {
       Intent launchIntent = mainActivity.getIntent();
-      notificationLaunchedApp =
-          launchIntent != null
-              && (SELECT_NOTIFICATION.equals(launchIntent.getAction())
-                  || SELECT_FOREGROUND_NOTIFICATION_ACTION.equals(launchIntent.getAction()))
-              && !launchedActivityFromHistory(launchIntent);
+      notificationLaunchedApp = launchIntent != null
+          && (SELECT_NOTIFICATION.equals(launchIntent.getAction())
+              || SELECT_FOREGROUND_NOTIFICATION_ACTION.equals(launchIntent.getAction()))
+          && !launchedActivityFromHistory(launchIntent);
       if (notificationLaunchedApp) {
         notificationAppLaunchDetails.put(
             "notificationResponse", extractNotificationResponseMap(launchIntent));
@@ -1492,8 +1481,8 @@ public class FlutterLocalNotificationsPlugin
       new IsolatePreferences(applicationContext).saveCallbackKeys(dispatcherHandle, callbackHandle);
     }
 
-    SharedPreferences sharedPreferences =
-        applicationContext.getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
+    SharedPreferences sharedPreferences = applicationContext.getSharedPreferences(SHARED_PREFERENCES_KEY,
+        Context.MODE_PRIVATE);
     SharedPreferences.Editor editor = sharedPreferences.edit();
     editor.putString(DEFAULT_ICON, defaultIcon).apply();
     result.success(true);
@@ -1504,7 +1493,8 @@ public class FlutterLocalNotificationsPlugin
     result.success(handle);
   }
 
-  /// Extracts the details of the notifications passed from the Flutter side and also validates that
+  /// Extracts the details of the notifications passed from the Flutter side and
+  /// also validates that
   // some of the details (especially resources) passed are valid
   private NotificationDetails extractNotificationDetails(
       Result result, Map<String, Object> arguments) {
@@ -1535,10 +1525,9 @@ public class FlutterLocalNotificationsPlugin
     if (!StringUtils.isNullOrEmpty(notificationDetails.sound)
         && (notificationDetails.soundSource == null
             || notificationDetails.soundSource == SoundSource.RawResource)) {
-      int soundResourceId =
-          applicationContext
-              .getResources()
-              .getIdentifier(notificationDetails.sound, "raw", applicationContext.getPackageName());
+      int soundResourceId = applicationContext
+          .getResources()
+          .getIdentifier(notificationDetails.sound, "raw", applicationContext.getPackageName());
       if (soundResourceId == 0) {
         result.error(
             INVALID_SOUND_ERROR_CODE,
@@ -1553,12 +1542,12 @@ public class FlutterLocalNotificationsPlugin
   private boolean hasInvalidBigPictureResources(
       Result result, NotificationDetails notificationDetails) {
     if (notificationDetails.style == NotificationStyle.BigPicture) {
-      BigPictureStyleInformation bigPictureStyleInformation =
-          (BigPictureStyleInformation) notificationDetails.styleInformation;
+      BigPictureStyleInformation bigPictureStyleInformation = (BigPictureStyleInformation) notificationDetails.styleInformation;
       if (hasInvalidLargeIcon(
           result,
           bigPictureStyleInformation.largeIcon,
-          bigPictureStyleInformation.largeIconBitmapSource)) return true;
+          bigPictureStyleInformation.largeIconBitmapSource))
+        return true;
 
       if (bigPictureStyleInformation.bigPictureBitmapSource == BitmapSource.DrawableResource) {
         String bigPictureResourceName = (String) bigPictureStyleInformation.bigPicture;
@@ -1614,8 +1603,7 @@ public class FlutterLocalNotificationsPlugin
   private void cancelAllNotifications(Result result) {
     NotificationManagerCompat notificationManager = getNotificationManager(applicationContext);
     notificationManager.cancelAll();
-    ArrayList<NotificationDetails> scheduledNotifications =
-        loadScheduledNotifications(applicationContext);
+    ArrayList<NotificationDetails> scheduledNotifications = loadScheduledNotifications(applicationContext);
     if (scheduledNotifications == null || scheduledNotifications.isEmpty()) {
       result.success(null);
       return;
@@ -1623,8 +1611,7 @@ public class FlutterLocalNotificationsPlugin
 
     Intent intent = new Intent(applicationContext, ScheduledNotificationReceiver.class);
     for (NotificationDetails scheduledNotification : scheduledNotifications) {
-      PendingIntent pendingIntent =
-          getBroadcastPendingIntent(applicationContext, scheduledNotification.id, intent);
+      PendingIntent pendingIntent = getBroadcastPendingIntent(applicationContext, scheduledNotification.id, intent);
       AlarmManager alarmManager = getAlarmManager(applicationContext);
       alarmManager.cancel(pendingIntent);
     }
@@ -1643,14 +1630,13 @@ public class FlutterLocalNotificationsPlugin
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
       String permission = Manifest.permission.POST_NOTIFICATIONS;
-      boolean permissionGranted =
-          ContextCompat.checkSelfPermission(mainActivity, permission)
-              == PackageManager.PERMISSION_GRANTED;
+      boolean permissionGranted = ContextCompat.checkSelfPermission(mainActivity,
+          permission) == PackageManager.PERMISSION_GRANTED;
 
       if (!permissionGranted) {
         permissionRequestInProgress = true;
         ActivityCompat.requestPermissions(
-            mainActivity, new String[] {permission}, NOTIFICATION_PERMISSION_REQUEST_CODE);
+            mainActivity, new String[] { permission }, NOTIFICATION_PERMISSION_REQUEST_CODE);
       } else {
         this.callback.complete(true);
         permissionRequestInProgress = false;
@@ -1665,8 +1651,7 @@ public class FlutterLocalNotificationsPlugin
   public boolean onRequestPermissionsResult(
       int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
     if (permissionRequestInProgress && requestCode == NOTIFICATION_PERMISSION_REQUEST_CODE) {
-      boolean granted =
-          grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED;
+      boolean granted = grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED;
       callback.complete(granted);
       permissionRequestInProgress = false;
       return granted;
@@ -1705,13 +1690,11 @@ public class FlutterLocalNotificationsPlugin
   private void createNotificationChannelGroup(MethodCall call, Result result) {
     if (VERSION.SDK_INT >= VERSION_CODES.O) {
       Map<String, Object> arguments = call.arguments();
-      NotificationChannelGroupDetails notificationChannelGroupDetails =
-          NotificationChannelGroupDetails.from(arguments);
-      NotificationManager notificationManager =
-          (NotificationManager) applicationContext.getSystemService(Context.NOTIFICATION_SERVICE);
-      NotificationChannelGroup notificationChannelGroup =
-          new NotificationChannelGroup(
-              notificationChannelGroupDetails.id, notificationChannelGroupDetails.name);
+      NotificationChannelGroupDetails notificationChannelGroupDetails = NotificationChannelGroupDetails.from(arguments);
+      NotificationManager notificationManager = (NotificationManager) applicationContext
+          .getSystemService(Context.NOTIFICATION_SERVICE);
+      NotificationChannelGroup notificationChannelGroup = new NotificationChannelGroup(
+          notificationChannelGroupDetails.id, notificationChannelGroupDetails.name);
       if (VERSION.SDK_INT >= VERSION_CODES.P) {
         notificationChannelGroup.setDescription(notificationChannelGroupDetails.description);
       }
@@ -1722,8 +1705,8 @@ public class FlutterLocalNotificationsPlugin
 
   private void deleteNotificationChannelGroup(MethodCall call, Result result) {
     if (VERSION.SDK_INT >= VERSION_CODES.O) {
-      NotificationManager notificationManager =
-          (NotificationManager) applicationContext.getSystemService(Context.NOTIFICATION_SERVICE);
+      NotificationManager notificationManager = (NotificationManager) applicationContext
+          .getSystemService(Context.NOTIFICATION_SERVICE);
       String groupId = call.arguments();
       notificationManager.deleteNotificationChannelGroup(groupId);
     }
@@ -1732,16 +1715,15 @@ public class FlutterLocalNotificationsPlugin
 
   private void createNotificationChannel(MethodCall call, Result result) {
     Map<String, Object> arguments = call.arguments();
-    NotificationChannelDetails notificationChannelDetails =
-        NotificationChannelDetails.from(arguments);
+    NotificationChannelDetails notificationChannelDetails = NotificationChannelDetails.from(arguments);
     setupNotificationChannel(applicationContext, notificationChannelDetails);
     result.success(null);
   }
 
   private void deleteNotificationChannel(MethodCall call, Result result) {
     if (VERSION.SDK_INT >= VERSION_CODES.O) {
-      NotificationManager notificationManager =
-          (NotificationManager) applicationContext.getSystemService(Context.NOTIFICATION_SERVICE);
+      NotificationManager notificationManager = (NotificationManager) applicationContext
+          .getSystemService(Context.NOTIFICATION_SERVICE);
       String channelId = call.arguments();
       notificationManager.deleteNotificationChannel(channelId);
     }
@@ -1756,8 +1738,8 @@ public class FlutterLocalNotificationsPlugin
           null);
       return;
     }
-    NotificationManager notificationManager =
-        (NotificationManager) applicationContext.getSystemService(Context.NOTIFICATION_SERVICE);
+    NotificationManager notificationManager = (NotificationManager) applicationContext
+        .getSystemService(Context.NOTIFICATION_SERVICE);
     try {
       Map<String, Object> arguments = call.arguments();
       int id = (int) arguments.get("id");
@@ -1778,8 +1760,8 @@ public class FlutterLocalNotificationsPlugin
         return;
       }
 
-      NotificationCompat.MessagingStyle messagingStyle =
-          NotificationCompat.MessagingStyle.extractMessagingStyleFromNotification(notification);
+      NotificationCompat.MessagingStyle messagingStyle = NotificationCompat.MessagingStyle
+          .extractMessagingStyleFromNotification(notification);
       if (messagingStyle == null) {
         result.success(null);
         return;
@@ -1854,8 +1836,7 @@ public class FlutterLocalNotificationsPlugin
 
   private void getNotificationChannels(Result result) {
     try {
-      NotificationManagerCompat notificationManagerCompat =
-          getNotificationManager(applicationContext);
+      NotificationManagerCompat notificationManagerCompat = getNotificationManager(applicationContext);
       List<NotificationChannel> channels = notificationManagerCompat.getNotificationChannels();
       List<Map<String, Object>> channelsPayload = new ArrayList<>();
       for (NotificationChannel channel : channels) {
@@ -1892,9 +1873,9 @@ public class FlutterLocalNotificationsPlugin
             channelPayload.put("soundSource", soundSources.indexOf(SoundSource.RawResource));
             channelPayload.put("sound", resource);
           } else {
-            // Kept for backwards compatibility when the source resource used to be based on id
-            String resourceName =
-                applicationContext.getResources().getResourceEntryName(resourceId);
+            // Kept for backwards compatibility when the source resource used to be based on
+            // id
+            String resourceName = applicationContext.getResources().getResourceEntryName(resourceId);
             if (resourceName != null) {
               channelPayload.put("soundSource", soundSources.indexOf(SoundSource.RawResource));
               channelPayload.put("sound", resourceName);
@@ -1927,13 +1908,11 @@ public class FlutterLocalNotificationsPlugin
     ArrayList<Integer> foregroundServiceTypes = call.argument("foregroundServiceTypes");
     if (foregroundServiceTypes == null || foregroundServiceTypes.size() != 0) {
       if (notificationData != null && startType != null) {
-        NotificationDetails notificationDetails =
-            extractNotificationDetails(result, notificationData);
+        NotificationDetails notificationDetails = extractNotificationDetails(result, notificationData);
         if (notificationDetails != null) {
           if (notificationDetails.id != 0) {
-            ForegroundServiceStartParameter parameter =
-                new ForegroundServiceStartParameter(
-                    notificationDetails, startType, foregroundServiceTypes);
+            ForegroundServiceStartParameter parameter = new ForegroundServiceStartParameter(
+                notificationDetails, startType, foregroundServiceTypes);
             Intent intent = new Intent(applicationContext, ForegroundService.class);
             intent.putExtra(ForegroundServiceStartParameter.EXTRA, parameter);
             ContextCompat.startForegroundService(applicationContext, intent);
